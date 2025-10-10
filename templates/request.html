@@ -215,12 +215,22 @@
                                     <div class="card-header"><h5>Build Results</h5></div>
                                     <div class="card-body">
                                         {% if request.results %}
+
+                                            {% if request.staging %}
                                             From staging project
                                             <a href="{{ request.project_url }}{{ request.staging }}">{{ request.staging }}</a>
+                                            {% else %}
+                                            From devel project
+                                            <a href="{{ request.project_url }}{{ request.action.source_project }}">{{ request.action.source_project }}</a>
+                                            {% endif %}
 
                                             {% for package, repos in request.results.items() %}
                                                 <h5 class="mt-4 text-primary">{{ package }}</h5>
+                                                {% if request.staging %}
                                                 {% set repositories = ['bootstrap_copy', 'images', 'product', 'standard'] %}
+                                                {% else %}
+                                                {% set repositories = repos %}
+                                                {% endif %}
                                                 {% for repo in repositories %}
                                                     {% if repo in repos %}
                                                         <div class="card mb-3">

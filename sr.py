@@ -297,12 +297,14 @@ def main(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
     root = fetch_xml("POST", f"{apiurl}/request/{request_id}?cmd=diff&view=xml&withissues=1")
     parse_request_diff_and_issues_xml(req, root)
 
-
     # Get build information
-    # No build results when it's accepted or not staged yet
     if req.staging:
         root = fetch_xml("GET", f"{apiurl}/build/{req.staging}/_result")
-        parse_results_xml(req, root)
+    else:
+        # When SR is accepted or not staged, use source project
+        root = fetch_xml("GET", f"{apiurl}/build/{req.action["source_project"]}/_result")
+
+    parse_results_xml(req, root)
 
     # Write pages
     os.makedirs(output_dir, exist_ok=True)
