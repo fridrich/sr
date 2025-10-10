@@ -112,10 +112,10 @@
                                                     <a href="{{ request.user_url }}/{{ r.by_user }}">{{ r.by_user }}</a>
                                                 {% elif r.by_group %}
                                                     <i class="fas fa-users text-secondary"></i>
-                                                    <a href="{{ request.group_url }}/{{ r.by_group }}">{{ r.by_group }}</a>
+                                                    <a href="{{ request.group_url }}{{ r.by_group }}">{{ r.by_group }}</a>
                                                 {% elif r.by_project %}
                                                     <i class="fa fa-cubes text-secondary"></i>
-                                                    <a href="{{ request.project_url }}/{{ r.by_project }}">{{ r.by_project }}</a>
+                                                    <a href="{{ request.project_url }}{{ r.by_project }}">{{ r.by_project }}</a>
                                                 {% else %}
                                                     <span class="text-muted">Unknown reviewer</span>
                                                 {% endif %}
