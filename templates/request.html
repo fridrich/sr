@@ -92,7 +92,7 @@
                                 <ul class="list-unstyled">
                                     <li>
                                         <i class="fas fa-user text-success"></i> Created by
-                                        <a href="{{ request.creator }}">{{ request.creator }}</a>
+                                        <a href="{{ request.user_url }}/{{ request.creator }}">{{ request.creator }}</a>
                                         <time class="timeago" datetime="{{ request.state.created_utc }}" title="{{ request.state.created_utc.strftime('%Y-%m-%d %H:%M UTC') }}">
                                             {{ request.state.created_utc }}
                                         </time>
@@ -109,13 +109,13 @@
                                                 <i class="fas fa-info-circle text-info"></i> Open review for
                                                 {% if r.by_user %}
                                                     <i class="fas fa-user text-secondary"></i>
-                                                    <a href="/user/{{ r.by_user }}">{{ r.by_user }}</a>
+                                                    <a href="{{ request.user_url }}/{{ r.by_user }}">{{ r.by_user }}</a>
                                                 {% elif r.by_group %}
                                                     <i class="fas fa-users text-secondary"></i>
-                                                    <a href="/group/{{ r.by_group }}">{{ r.by_group }}</a>
+                                                    <a href="{{ request.group_url }}/{{ r.by_group }}">{{ r.by_group }}</a>
                                                 {% elif r.by_project %}
                                                     <i class="fa fa-cubes text-secondary"></i>
-                                                    <a href="/project/{{ r.by_project }}">{{ r.by_project }}</a>
+                                                    <a href="{{ request.project_url }}/{{ r.by_project }}">{{ r.by_project }}</a>
                                                 {% else %}
                                                     <span class="text-muted">Unknown reviewer</span>
                                                 {% endif %}

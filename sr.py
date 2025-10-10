@@ -39,6 +39,8 @@ class RequestID:
         self.package_url = f"{base_url}/package/show/"
         self.project_url = f"{base_url}/project/show/"
         self.build_url = f"{base_url}/package/live_build_log/"
+        self.user_url = f"{base_url}/users/"
+        self.group_url = f"{base_url}/groups/"
 
 def parse_request_xml(req, root):
 
