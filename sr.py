@@ -273,13 +273,15 @@ def fetch_xml(method, url):
     except Exception as e:
         sys.exit(f"Failed to fetch {url}: {e}")
 
+def path_dir(directory):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, directory)
 
-def main(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
+def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
 
     # output and templates dir are relative to where the script is running
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    templates_dir = os.path.join(script_dir, "templates")
-    output_dir = os.path.join(script_dir, "output")
+
+    templates_dir = path_dir("templates")
 
     osc.conf.get_config(override_apiurl=apiurl)
 
@@ -306,9 +308,6 @@ def main(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
 
     parse_results_xml(req, root)
 
-    # Write pages
-    os.makedirs(output_dir, exist_ok=True)
-
     env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
     template = env.get_template("request.html")
 
@@ -318,9 +317,7 @@ def main(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
         request=req
     )
 
-    output_path = os.path.join(output_dir, f"sr_{request_id}.html")
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(rendered)
+    return rendered
 
 
 if __name__ == "__main__":
@@ -346,4 +343,11 @@ if __name__ == "__main__":
     if args.api_url not in ["https://api.opensuse.org", "https://api.suse.de"]:
         sys.exit("Unknown API")
 
-    main(args.api_url, args.request_id, args.theme)
+    page = generate_request(args.api_url, args.request_id, args.theme)
+
+    output_dir = path_dir("output")
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, f"sr_{request_id}.html")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(rendered)
+
