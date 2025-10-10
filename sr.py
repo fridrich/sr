@@ -274,7 +274,7 @@ def fetch_xml(method, url):
         sys.exit(f"Failed to fetch {url}: {e}")
 
 
-def main(apiurl="https://api.opensuse.org", request_id="1"):
+def main(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
 
     # output and templates dir are relative to where the script is running
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -312,7 +312,7 @@ def main(apiurl="https://api.opensuse.org", request_id="1"):
 
     rendered = template.render(
         lastupdate=datetime.now(timezone.utc),
-        user_theme = "light",  # options: light, dark, auto (browser's)
+        user_theme = theme,
         request=req
     )
 
@@ -332,9 +332,16 @@ if __name__ == "__main__":
         help="OBS API base URL (default: https://api.opensuse.org)"
     )
 
+    parser.add_argument(
+        "--theme",
+        choices=["light", "dark"],
+        default="light",
+        help="Bootstrap theme to use (default: light)"
+    )
+
     args = parser.parse_args()
 
     if args.api_url not in ["https://api.opensuse.org", "https://api.suse.de"]:
         sys.exit("Unknown API")
 
-    main(args.api_url, args.request_id)
+    main(args.api_url, args.request_id, args.theme)
