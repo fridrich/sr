@@ -329,13 +329,13 @@ if __name__ == "__main__":
     parser.add_argument("request_id", help="OBS Request ID")
 
     parser.add_argument(
-        "--api-url",
+        "-A", "--api-url",
         default="https://api.opensuse.org",
         help="OBS API base URL (default: https://api.opensuse.org)"
     )
 
     parser.add_argument(
-        "--theme",
+        "-t", "--theme",
         choices=["light", "dark"],
         default="light",
         help="Bootstrap theme to use (default: light)"
