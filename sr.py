@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
+import logging
 import os
-import sys
 
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -12,6 +12,8 @@ import osc
 from jinja2 import Environment, FileSystemLoader
 from osc.core import http_request
 
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 class RequestID:
 
@@ -44,6 +46,9 @@ class RequestID:
         self.external_url = f"{base_url}/requests/"
 
 def parse_request_xml(req, root):
+
+    if root is None:
+        return
 
     req.creator = root.attrib.get("creator")
     req.description = root.findtext("description", default="")
@@ -151,6 +156,9 @@ def parse_request_xml(req, root):
 
 def parse_comments_request_xml(req, root):
 
+    if root is None:
+        return
+
     for comment_elem in root.findall("comment"):
         comment_data = {
             "id": comment_elem.attrib.get("id"),
@@ -163,6 +171,9 @@ def parse_comments_request_xml(req, root):
 
 
 def parse_request_diff_and_issues_xml(req, root):
+
+    if root is None:
+        return
 
     issues = []
     diff_files = []
@@ -223,6 +234,9 @@ def parse_request_diff_and_issues_xml(req, root):
 
 def parse_results_xml(req, root):
 
+    if root is None:
+        return
+
     parsed_results = []
     pkg = req.package
 
@@ -272,11 +286,14 @@ def fetch_xml(method, url):
         f = http_request(method, url)
         return ET.parse(f).getroot()
     except Exception as e:
-        sys.exit(f"Failed to fetch {url}: {e}")
+        logger.error(f"Failed to fetch {url}: {e}")
+        return None
+
 
 def path_dir(directory):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(script_dir, directory)
+
 
 def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
 
@@ -342,7 +359,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.api_url not in ["https://api.opensuse.org", "https://api.suse.de"]:
-        sys.exit("Unknown API")
+        logging.error("Unknown API, I'll default to https://api.opensuse.org'")
+        args.api_url = "https://api.opensuse.org"
 
     page = generate_request(args.api_url, args.request_id, args.theme)
 
