@@ -41,6 +41,7 @@ class RequestID:
         self.build_url = f"{base_url}/package/live_build_log/"
         self.user_url = f"{base_url}/users/"
         self.group_url = f"{base_url}/groups/"
+        self.external_url = f"{base_url}/requests/"
 
 def parse_request_xml(req, root):
 

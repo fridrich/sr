@@ -101,7 +101,7 @@
                                         <i class="fas fa-info-circle text-info"></i> In state
                                         <span class="fw-bold">{{ request.state.name }}</span>
                                     </li>
-
+                                        <li><i class="fas fa-info-circle text-info"></i> OBS request: <a href="{{ request.external_url }}{{ request.rid }}">{{request.external_url}}{{ request.rid }}</a><li>
                                     {% set pending_reviews = request.reviews | selectattr('state', 'equalto', 'new') | list %}
                                     {% if pending_reviews %}
                                         {% for r in pending_reviews %}
