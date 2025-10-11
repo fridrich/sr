@@ -347,7 +347,7 @@ if __name__ == "__main__":
 
     output_dir = path_dir("output")
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f"sr_{request_id}.html")
+    output_path = os.path.join(output_dir, f"sr_{args.request_id}.html")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(rendered)
+        f.write(page)
 
