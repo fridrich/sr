@@ -198,11 +198,13 @@
                                                     {{ diff.state }}
                                                 </span>
                                             </div>
+                                            {% if diff.content %}
                                             <div class="collapse {{ 'show' if loop.first else '' }}" id="{{ collapse_id }}">
                                                 <div class="card-body">
                                                     <pre><code class="diff">{{ diff.content | e }}</code></pre>
                                                 </div>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     {% endfor %}
                                 {% endif %}
