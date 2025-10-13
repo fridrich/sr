@@ -304,7 +304,7 @@ def path_dir(directory):
     return os.path.join(script_dir, directory)
 
 
-def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="light"):
+def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="light", standalone=False):
 
     # output and templates dir are relative to where the script is running
 
@@ -342,6 +342,7 @@ def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="l
     rendered = template.render(
         lastupdate=datetime.now(timezone.utc),
         user_theme = theme,
+        standalone = 1 if standalone == True else 0,
         request=req
     )
 
@@ -372,7 +373,7 @@ if __name__ == "__main__":
         logging.error("Unknown API, I'll default to https://api.opensuse.org'")
         args.api_url = "https://api.opensuse.org"
 
-    page = generate_request(args.api_url, args.request_id, args.theme)
+    page = generate_request(args.api_url, args.request_id, args.theme, True)
 
     output_dir = path_dir("output")
     os.makedirs(output_dir, exist_ok=True)
