@@ -101,7 +101,14 @@
                                         <i class="fas fa-info-circle text-info"></i> In state
                                         <span class="fw-bold">{{ request.state.name }}</span>
                                         {% if request.state.name =="superseded" and request.state.superseded_by %}
-                                        by <a href="{{ request.state.superseded_by }}">{{request.state.superseded_by }}</a>
+                                            by
+                                            {% if not standalone %}
+                                                <a href="{{ request.state.superseded_by }}?apiurl={{ request.apiurl }}&amp;theme={{ user_theme }}">
+                                            {% endif %}
+                                            #{{request.state.superseded_by }}
+                                            {% if not standalone %}
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                     </li>
                                         <li><i class="fas fa-info-circle text-info"></i> OBS request: <a href="{{ request.external_url }}{{ request.rid }}">{{request.external_url}}{{ request.rid }}</a><li>
