@@ -136,7 +136,7 @@ def parse_request_xml(req, root):
     # Sort by 'when'
     req.history.sort(key=lambda x: x["when"])
 
-    now = datetime.now()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     for h in req.history:
         delta = now - h["when"]
         if delta.days > 0:
