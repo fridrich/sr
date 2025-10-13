@@ -100,6 +100,9 @@
                                     <li>
                                         <i class="fas fa-info-circle text-info"></i> In state
                                         <span class="fw-bold">{{ request.state.name }}</span>
+                                        {% if request.state.name =="superseded" and request.state.superseded_by %}
+                                        by <a href="{{ request.state.superseded_by }}">{{request.state.superseded_by }}</a>
+                                        {% endif %}
                                     </li>
                                         <li><i class="fas fa-info-circle text-info"></i> OBS request: <a href="{{ request.external_url }}{{ request.rid }}">{{request.external_url}}{{ request.rid }}</a><li>
                                     {% set pending_reviews = request.reviews | selectattr('state', 'equalto', 'new') | list %}

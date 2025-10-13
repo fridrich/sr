@@ -88,6 +88,8 @@ def parse_request_xml(req, root):
             ).replace(tzinfo=timezone.utc),
             "comment": state_elem.findtext("comment", default=""),
         }
+        if req.state["name"] == "superseded":
+            req.state["superseded_by"] = state_elem.attrib.get("superseded_by")
 
     # Parse <review>, and <history>
     for review_elem in root.findall("review"):
