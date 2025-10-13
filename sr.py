@@ -251,7 +251,7 @@ def parse_results_xml(req, root):
         }
 
         for status in result.findall("status"):
-            if status.attrib["package"].startswith(pkg):
+            if status.attrib["package"] == pkg or status.attrib["package"].startswith(pkg+":"):
                 # Flatten status data into top-level dict, rename 'code' to 'status_code'
                 parsed_results.append({
                     **result_attrs,
