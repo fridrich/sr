@@ -32,5 +32,29 @@ def show_request(request_id):
         return f"<h2>Error processing request {request_id}:</h2><pre>{e}</pre>", 500
 
 
+@app.route("/project/<project_name>")
+def show_project(project_name):
+    apiurl = request.args.get("apiurl", "https://api.opensuse.org")
+    theme = request.args.get("theme", "light")
+
+    try:
+        html_output = sr.generate_project(apiurl, project_name, theme)
+        return html_output
+    except Exception as e:
+        return f"<h2>Error processing project {project_name}:</h2><pre>{e}</pre>", 500
+
+
+@app.route("/package/<project_name>/<package_name>")
+def show_package(project_name, package_name):
+    apiurl = request.args.get("apiurl", "https://api.opensuse.org")
+    theme = request.args.get("theme", "light")
+
+    try:
+        html_output = sr.generate_package(apiurl, project_name, package_name, theme)
+        return html_output
+    except Exception as e:
+        return f"<h2>Error processing package {project_name}/{package_name}:</h2><pre>{e}</pre>", 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
