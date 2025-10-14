@@ -349,6 +349,51 @@ def generate_request(apiurl="https://api.opensuse.org", request_id="1", theme="l
     return rendered
 
 
+def generate_project(apiurl="https://api.opensuse.org", project_name=None, theme="light"):
+
+    # output and templates dir are relative to where the script is running
+
+    templates_dir = path_dir("templates")
+
+    osc.conf.get_config(override_apiurl=apiurl)
+
+    root = fetch_xml("GET", f"{apiurl}/build/{project_name}/_result")
+
+    env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
+    template = env.get_template("project.html")
+
+    rendered = template.render(
+        lastupdate=datetime.now(timezone.utc),
+        user_theme = theme,
+        project = project_name
+    )
+
+    return rendered
+
+
+def generate_package(apiurl="https://api.opensuse.org", project_name=None, package_name=None, theme="light"):
+
+    # output and templates dir are relative to where the script is running
+
+    templates_dir = path_dir("templates")
+
+    osc.conf.get_config(override_apiurl=apiurl)
+
+    root = fetch_xml("GET", f"{apiurl}/build/{project_name}/_result")
+
+    env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
+    template = env.get_template("package.html")
+
+    rendered = template.render(
+        lastupdate=datetime.now(timezone.utc),
+        user_theme = theme,
+        project = project_name,
+        package = package_name
+    )
+
+    return rendered
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Fetch and render OBS request data.")

@@ -171,13 +171,13 @@
                         {% else %}
                             <p>
                                 Submit package
-                                <a href="{{ request.project_url }}{{ request.action.source_project }}">{{ request.action.source_project }}</a>
+                                <a href="/project/{{ request.action.source_project }}?apiurl={{ request.apiurl }}&amp;theme={{ user_theme }}">{{ request.action.source_project }}</a>
                                 /
-                                <a href="{{ request.package_url }}{{ request.action.source_project }}/{{ request.action.source_package }}">{{ request.action.source_package }}</a>
+                                <a href="/package/{{ request.action.source_project }}/{{ request.action.source_package }}?apiurl={{ request.apiurl }}&amp;theme={{ user_theme }}">{{ request.action.source_package }}</a>
                                 to package
-                                <a href="{{ request.project_url }}{{ request.action.target_project }}">{{ request.action.target_project }}</a>
+                                <a href="/project/{{ request.action.target_project }}?apiurl={{ request.apiurl }}&amp;theme={{ user_theme }}">{{ request.action.target_project }}</a>
                                 /
-                                <a href="{{ request.package_url }}{{ request.action.target_project }}/{{ request.action.target_package }}">{{ request.action.target_package }}</a>
+                                <a href="/package/{{ request.action.target_project }}/{{ request.action.target_package }}?apiurl={{ request.apiurl }}&amp;theme={{ user_theme }}">{{ request.action.target_package }}</a>
                             </p>
                         {% endif %}
 
