@@ -48,6 +48,13 @@
 </head>
 
 <body>
-    <h1>Project: {{ project }}</h1>
+    <div class="container-xxl my-4">
+        <div class="text-end">
+            Last update:
+            <time class="timeago" datetime="{{ lastupdate }}">{{ lastupdate }}</time>
+        </div>
+
+        <h1>Project: {{ project }}</h1>
+    </dif>
 </body>
 </html>

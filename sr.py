@@ -290,6 +290,61 @@ def parse_results_xml(req, root):
                    for pkg, repos in grouped.items()}
 
 
+def parse_project_results_xml(root):
+
+    if root is None:
+        return
+
+    parsed_results = []
+
+    for result in root.findall("result"):
+
+        result_attrs = {
+            # "project": result.attrib["project"], - not needed
+            "repository": result.attrib["repository"],
+            "arch": result.attrib["arch"],
+            "code": result.attrib["code"],
+            "state": result.attrib["state"]
+        }
+
+        for status in result.findall("status"):
+            # Flatten status data into top-level dict, rename 'code' to 'status_code'
+            parsed_results.append({
+                **result_attrs,
+                "package": status.attrib["package"],
+                "status_code": status.attrib["code"],
+                "details": status.findtext("details")
+            })
+
+    # Nested dict: package → repo → arch → list of result dicts
+    grouped = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    for entry in parsed_results:
+        package = entry["package"]
+        repo = entry["repository"]
+        arch = entry["arch"]
+        grouped[package][repo][arch].append({
+                            'code': entry["code"],
+                            'details': entry["details"],
+                            'state': entry["state"],
+                            'status_code': entry["status_code"]
+                            })
+
+    aggregated = defaultdict(lambda: defaultdict(lambda: defaultdict(set)))
+    packages = set()
+
+    for pkg in grouped:
+        packages.add(pkg.split(':')[0])
+        for repo in grouped[pkg]:
+            for arch in grouped[pkg][repo]:
+                for q in grouped[pkg][repo][arch]:
+                    aggregated[repo][arch][q["status_code"]].add(pkg)
+
+    # Convert to regular dicts for jinja2
+    results = {repo: {arch: dict(codes) for arch, codes in archs.items()}
+                   for repo, archs in aggregated.items()}
+    return results, packages
+
+
 def fetch_xml(method, url):
     try:
         f = http_request(method, url)
@@ -357,7 +412,11 @@ def generate_project(apiurl="https://api.opensuse.org", project_name=None, theme
 
     osc.conf.get_config(override_apiurl=apiurl)
 
+    req = RequestID("1", apiurl)
+
     root = fetch_xml("GET", f"{apiurl}/build/{project_name}/_result")
+
+    results, packages = parse_project_results_xml(root)
 
     env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
     template = env.get_template("project.html")
@@ -365,7 +424,10 @@ def generate_project(apiurl="https://api.opensuse.org", project_name=None, theme
     rendered = template.render(
         lastupdate=datetime.now(timezone.utc),
         user_theme = theme,
-        project = project_name
+        project = project_name,
+        results = results,
+        packages = packages,
+        request = req
     )
 
     return rendered
@@ -380,10 +442,12 @@ def generate_package(apiurl="https://api.opensuse.org", project_name=None, packa
     osc.conf.get_config(override_apiurl=apiurl)
 
     req = RequestID("1", apiurl)
+    req.package = package_name
+    req.project = project_name
 
-    root = fetch_xml("GET", f"{apiurl}/build/{project_name}/_result")
+    root = fetch_xml("GET", f"{apiurl}/build/{req.project}/_result")
 
-    req.results = parse_results_xml(package_name, root)
+    parse_results_xml(req, root)
 
     env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
     template = env.get_template("package.html")
@@ -391,8 +455,6 @@ def generate_package(apiurl="https://api.opensuse.org", project_name=None, packa
     rendered = template.render(
         lastupdate=datetime.now(timezone.utc),
         user_theme = theme,
-        project = project_name,
-        package = package_name,
         request = req
     )
 
