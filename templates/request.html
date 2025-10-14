@@ -292,10 +292,45 @@
 
                                             {% for package, repos in request.results.items() %}
                                                 <h5 class="mt-4 text-primary">{{ package }}</h5>
-                                                {% for repo, archs in repos.items() %}
-                                                    <div class="card mb-3">
-                                                        <div class="card-header">
-                                                            <strong>{{ repo }}</strong>
+                                                {% if request.staging %}
+                                                {% set repositories = ['bootstrap_copy', 'images', 'product', 'standard'] %}
+                                                {% else %}
+                                                {% set repositories = repos %}
+                                                {% endif %}
+                                                {% for repo in repositories %}
+                                                    {% if repo in repos %}
+                                                        <div class="card mb-3">
+                                                            <div class="card-header">
+                                                                <strong>{{ repo }}</strong>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                {% for arch, results in repos[repo].items() %}
+                                                                    <div class="d-flex align-items-start mb-2">
+                                                                        <div class="me-3 d-flex align-items-center min-width-arch">
+                                                                            <i class="fas fa-dolly-flatbed"></i>
+                                                                            <span class="ms-2 fw-semibold" style="min-width: 120px;">{{ arch }}</span>
+                                                                        </div>
+                                                                        <div class="d-flex flex-wrap gap-2">
+                                                                            {% for result in results %}
+                                                                                <div>
+                                                                                    <span class="badge bg-{{ 'success' if result.status_code == 'succeeded' else 'danger' if result.status_code == 'failed' or result.status_code == 'unresolvable' else 'primary' if result.status_code == 'building' else 'secondary' }}"
+                                                                                          {% if result.details %}
+                                                                                              data-bs-toggle="tooltip"
+                                                                                              title="{{ result.details }}"
+                                                                                          {% endif %}>
+                                                                                        {% if request.staging %}
+                                                                                        <a href="{{ request.build_url}}{{ request.staging}}/{{package}}/{{repo}}/{{arch}}" class="text-white">{{ result.status_code }}</a>
+                                                                                        {% else %}
+                                                                                        <a href="{{ request.build_url}}{{ request.action.source_project}}/{{package}}/{{repo}}/{{arch}}" class="text-white">{{ result.status_code }}</a>
+                                                                                        {% endif %}
+
+                                                                                    </span>
+                                                                                </div>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
                                                         </div>
                                                         <div class="card-body">
                                                             {% for arch, results in archs.items() %}
