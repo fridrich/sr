@@ -48,6 +48,102 @@
 </head>
 
 <body>
-    <h1>Package {{ package }} from project {{ project }}</h1>
+    <div class="container-xxl my-4">
+        <div class="text-end">
+            Last update:
+            <time class="timeago" datetime="{{ lastupdate }}">{{ lastupdate }}</time>
+        </div>
+
+        <h1>Package {{ package }} from project {{ project }}</h1>
+
+        <div class="card mb-3">
+            <div class="card-header"><h5>Build Results</h5></div>
+            <div class="card-body">
+                {% if request.results %}
+                    {% for package, repos in request.results.items() %}
+                        <h5 class="mt-4 text-primary">{{ package }}</h5>
+                        {% for repo in repos %}
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <strong>{{ repo }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    {% for arch, results in repos[repo].items() %}
+                                    <div class="d-flex align-items-start mb-2">
+                                        <div class="me-3 d-flex align-items-center min-width-arch">
+                                            <i class="fas fa-dolly-flatbed"></i>
+                                            <span class="ms-2 fw-semibold" style="min-width: 120px;">{{ arch }}</span>
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% for result in results %}
+                                                <div>
+                                                    <span class="badge bg-{{ 'success' if result.status_code == 'succeeded' else 'danger' }}"
+                                                    {% if result.details %}
+                                                        data-bs-toggle="tooltip"
+                                                        title="{{ result.details }}"
+                                                    {% endif %}>
+                                                        <a href="{{ request.build_url}}{{ project}}/{{package}}/{{repo}}/{{arch}}" class="text-white">{{ result.status_code }}</a>
+                                                    </span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No build results available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- This is for timeago-->
+    <script src="https://unpkg.com/timeago.js/dist/timeago.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const nodes = document.querySelectorAll("time.timeago");
+            timeago.render(nodes);
+        });
+    </script>
+
+    <!-- This is for code highlight-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        {% if user_theme == 'dark' %}
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+        {% else %}
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+        {% endif %}
+    <script>hljs.highlightAll();</script>
+
+    <script> <!-- This is for he collapse buttons -->
+        function expandAllDiffs() {
+            document.querySelectorAll('.collapse').forEach(el => {
+                new bootstrap.Collapse(el, { toggle: false }).show();
+            });
+        }
+
+        function collapseAllDiffs() {
+            document.querySelectorAll('.collapse').forEach(el => {
+                new bootstrap.Collapse(el, { toggle: false }).hide();
+            });
+        }
+    </script>
+
+    <script> <!-- This is for the description -->
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggle-description");
+            const container = document.getElementById("description-container");
+
+            toggleBtn.addEventListener("click", function () {
+                container.classList.toggle("expanded");
+                container.classList.toggle("collapsed");
+                toggleBtn.textContent = container.classList.contains("expanded") ? "Show less" : "Show more";
+            });
+        });
+    </script>
 </body>
 </html>

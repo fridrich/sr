@@ -379,7 +379,11 @@ def generate_package(apiurl="https://api.opensuse.org", project_name=None, packa
 
     osc.conf.get_config(override_apiurl=apiurl)
 
+    req = RequestID("1", apiurl)
+
     root = fetch_xml("GET", f"{apiurl}/build/{project_name}/_result")
+
+    req.results = parse_results_xml(package_name, root)
 
     env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
     template = env.get_template("package.html")
@@ -388,7 +392,8 @@ def generate_package(apiurl="https://api.opensuse.org", project_name=None, packa
         lastupdate=datetime.now(timezone.utc),
         user_theme = theme,
         project = project_name,
-        package = package_name
+        package = package_name,
+        request = req
     )
 
     return rendered
