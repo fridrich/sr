@@ -270,7 +270,7 @@
                                                                         <div class="d-flex flex-wrap gap-2">
                                                                             {% for result in results %}
                                                                                 <div>
-                                                                                    <span class="badge bg-{{ 'success' if result.status_code == 'succeeded' else 'danger' }}"
+                                                                                    <span class="badge bg-{{ 'success' if result.status_code == 'succeeded' else 'danger' if result.status_code == 'failed' or result.status_code == 'unresolvable' else 'primary' if result.status_code == 'building' else 'secondary' }}"
                                                                                           {% if result.details %}
                                                                                               data-bs-toggle="tooltip"
                                                                                               title="{{ result.details }}"
