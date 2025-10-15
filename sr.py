@@ -117,7 +117,10 @@ def parse_request_xml(req, root):
         req.reviews.append(review)
 
     # Get name of the package
-    req.package = req.action.get('target_package')
+    if req.staging:
+        req.package = req.action.get('target_package')
+    else:
+        req.package = req.action.get('source_package')
 
     # Order reviews in a history
     req.history = []
