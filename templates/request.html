@@ -142,7 +142,7 @@
             <div class="col-lg-12">
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5>Submit {{ request.action.target_package }}</h5>
+                        <h5>Package {{ request.action.target_package }}</h5>
                     </div>
                     <div class="card-body">
                         {% if request.action.type == "delete" %}
@@ -150,6 +150,17 @@
                             <a href="{{ request.package_url }}{{ request.action.target_project }}/{{ request.action.target_package }}">
                                 {{ request.action.target_project }}/{{ request.action.target_package }}
                             </a>
+                        {% elif request.action.type == "change_devel"  %}
+                            <p>
+                                Set package
+                                <a href="{{ request.project_url }}{{ request.action.source_project }}">{{ request.action.source_project }}</a>
+                                /
+                                <a href="{{ request.package_url }}{{ request.action.source_project }}/{{ request.action.source_package }}">{{ request.action.source_package }}</a>
+                                to be <strong>devel</strong> project/package of package
+                                <a href="{{ request.project_url }}{{ request.action.target_project }}">{{ request.action.target_project }}</a>
+                                /
+                                <a href="{{ request.package_url }}{{ request.action.target_project }}/{{ request.action.target_package }}">{{ request.action.target_package }}</a>
+                            </p>
                         {% else %}
                             <p>
                                 Submit package
