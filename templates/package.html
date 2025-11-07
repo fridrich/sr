@@ -61,7 +61,7 @@
             <div class="card-body">
                 {% if request.results %}
                     {% for package, repos in request.results.items() %}
-                        <h5 class="mt-4 text-primary">{{ request.package }}</h5>
+                        <h5 class="mt-4 text-primary">{{ package }}</h5>
                         {% for repo in repos %}
                             <div class="card mb-3">
                                 <div class="card-header">
