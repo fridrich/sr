@@ -49,6 +49,26 @@
 
 <body>
     <div class="container-xxl my-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-primary" id="toggle-theme">
+                    <i class="fas fa-adjust"></i>
+                    <span id="theme-text">{{ 'Dark' if user_theme == 'light' else 'Light' }}</span>
+                </button>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-server"></i> API
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item api-selector" href="#" data-api="https://api.opensuse.org">openSUSE</a></li>
+                        <li><a class="dropdown-item api-selector" href="#" data-api="https://api.suse.de">SUSE</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="text-end">
             Last update:
             <time class="timeago" datetime="{{ lastupdate }}">{{ lastupdate }}</time>
@@ -400,6 +420,62 @@
                 container.classList.toggle("expanded");
                 container.classList.toggle("collapsed");
                 toggleBtn.textContent = container.classList.contains("expanded") ? "Show less" : "Show more";
+            });
+        });
+    </script>
+    <script> <!-- Theme preferences -->
+        document.addEventListener("DOMContentLoaded", function () {
+            // Toggle theme
+            const toggleThemeBtn = document.getElementById("toggle-theme");
+            const themeText = document.getElementById("theme-text");
+
+            toggleThemeBtn.addEventListener("click", async function () {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+                // Update in flask server
+                const response = await fetch('/update_preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ theme: newTheme })
+                });
+
+                if (response.ok) {
+                    // Update HTML
+                    document.documentElement.setAttribute('data-bs-theme', newTheme);
+                    themeText.textContent = newTheme === 'light' ? 'Dark' : 'Light';
+
+                    // Actualizar highlight.js theme
+                    const highlightLink = document.querySelector('link[href*="highlight.js"]');
+                    if (highlightLink) {
+                        const newHref = newTheme === 'dark'
+                            ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css'
+                            : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+                        highlightLink.href = newHref;
+                    }
+                }
+            });
+
+            // API
+            document.querySelectorAll('.api-selector').forEach(link => {
+                link.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    const newApi = this.getAttribute('data-api');
+
+                    const response = await fetch('/update_preferences', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ apiurl: newApi })
+                    });
+
+                    if (response.ok) {
+                        location.reload();
+                    }
+                });
             });
         });
     </script>
