@@ -162,7 +162,7 @@
                                             <p>
                                                 <strong>{{ request.state.who }}</strong> —
                                                 <span class="badge bg-{{ 'warning' if request.state.name == 'revoked' else 'danger' }}">
-                                                    {{ request.state.name|upper }}
+                                                    {{ request.state.name }}
                                                 </span>
                                                 <time datetime="{{ request.state.when }}"
                                                     title="{{ request.state.when }}">
