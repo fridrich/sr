@@ -289,6 +289,23 @@ def parse_results_xml(req, root):
     req.results = {pkg: {repo: dict(archs) for repo, archs in repos.items()}
                    for pkg, repos in grouped.items()}
 
+    if req.staging:
+        # Prefer order for repositories
+        preferred_order = ['bootstrap_copy', 'images', 'product', 'standard']
+
+        for package in req.results:
+            ordered_repos = {}
+            for repo_name in preferred_order:
+                if repo_name in req.results[package]:
+                    ordered_repos[repo_name] = req.results[package][repo_name]
+
+            # Add remaining repositories
+            for repo_name in req.results[package]:
+                if repo_name not in ordered_repos:
+                    ordered_repos[repo_name] = req.results[package][repo_name]
+
+            req.results[package] = ordered_repos
+
 
 def fetch_xml(method, url):
     try:
