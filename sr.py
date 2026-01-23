@@ -181,7 +181,7 @@ def parse_request_diff_and_issues_xml(req, root):
         return
 
     # in this type of action there are not diff or issues
-    if req.action['type'] == "change_devel":
+    if not req.action or req.action.get('type') == "change_devel":
         return
 
     issues = []
