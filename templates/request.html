@@ -188,22 +188,12 @@
                                 {% if request.file_diffs %}
                                     {% for diff in request.file_diffs %}
                                         {% set collapse_id = 'diff-' ~ loop.index %}
-                                        {% if diff.name_old and diff.name_new %}
-                                            {% if diff.name_old == diff.name_new %}
-                                                {% set filename = diff.name_new %}
-                                            {% else %}
-                                                {% set filename = diff.name_old ~ ' → ' ~ diff.name_new %}
-                                            {% endif %}
-                                        {% else %}
-                                            {% set filename = diff.name_new or diff.name_old %}
-                                        {% endif %}
-
                                         <div class="card mb-3 w-100">
                                             <div class="card-header">
                                                 <a class="text-decoration-none" data-bs-toggle="collapse"
-                                                   href="#{{ collapse_id }}" role="button" aria-expanded="false"
-                                                   aria-controls="{{ collapse_id }}">
-                                                    <i class="fas fa-code-branch text-muted"></i> {{ filename }}
+                                                href="#{{ collapse_id }}" role="button" aria-expanded="false"
+                                                aria-controls="{{ collapse_id }}">
+                                                    <i class="fas fa-code-branch text-muted"></i> {{ diff.display_name }}
                                                 </a>
                                                 <span class="ms-2 badge
                                                     {% if diff.state == 'added' %}bg-success

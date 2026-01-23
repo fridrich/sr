@@ -213,6 +213,15 @@ def parse_request_diff_and_issues_xml(req, root):
             if file_data["name_old"] and file_data["name_new"] and file_data["name_old"] != file_data["name_new"]:
                 file_data["state"] = "renamed"
 
+            # Display name for diff files
+            if file_data["name_old"] and file_data["name_new"]:
+                if file_data["name_old"] == file_data["name_new"]:
+                    file_data["display_name"] = file_data["name_new"]
+                else:
+                    file_data["display_name"] = f"{file_data['name_old']} → {file_data['name_new']}"
+            else:
+                file_data["display_name"] = file_data["name_new"] or file_data["name_old"]
+
             diff_files.append(file_data)
 
         # <issues>
