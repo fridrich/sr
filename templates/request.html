@@ -149,6 +149,33 @@
                                             <i class="fas fa-check-circle text-success"></i> No pending reviews
                                         </li>
                                     {% endif %}
+                                    {% if request.state.name in ['revoked', 'declined'] %}
+                                    <hr />
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1 text-break">
+                                            <p>
+                                                <strong>{{ request.state.who }}</strong> —
+                                                <span class="badge bg-{{ 'warning' if request.state.name == 'revoked' else 'danger' }}">
+                                                    {{ request.state.name|upper }}
+                                                </span>
+                                                <time datetime="{{ request.state.when }}"
+                                                    title="{{ request.state.when }}">
+                                                    <small class="text-muted">
+                                                        {% set state_date = request.state.when %}
+                                                        {% if state_date %}
+                                                            {{ state_date }}
+                                                        {% endif %}
+                                                    </small>
+                                                </time>
+                                            </p>
+                                            {% if request.state.comment %}
+                                                <div class="ps-2">
+                                                    <p><em>{{ request.state.comment }}</em></p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 </ul>
                             </div>
                         </div>
